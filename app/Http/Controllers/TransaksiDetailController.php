@@ -38,15 +38,19 @@ class TransaksiDetailController extends Controller
             'jumlah' => 'required|numeric',
         ]);
 
-        // Gunakan transaction
+        DB::beginTransaction();
         try {
+            $transaksidetail = TransaksiDetail::findOrFail($id);
             $transaksidetail->nama_produk = $request->input('nama_produk');
             $transaksidetail->harga_satuan = $request->input('harga_satuan');
             $transaksidetail->jumlah = $request->input('jumlah');
-            $transaksidetail->subtotal = harga_satuan * jumlah
+            $transaksidetail->subtotal = $request->input('harga_satuan') * $request->input('jumlah');
+            $transaksidetail->save();
 
-            $transaksi->total_harga = sum subtotal
-            $transaksi->kembalian = bayar - total_harga; // hapus rumus
+            $transaksi = Transaksi::with('transaksidetail')->findOrFail($transaksidetail->id_transaksi);
+            $total_harga = $transaksi->transaksidetail->sum('subtotal');
+            $transaksi->total_harga =  $total_harga;
+            $transaksi->kembalian = $transaksi->bayar - $total_harga;
 
             return redirect('transaksidetail/'.$transaksidetail->id_transaksi)->with('pesan', 'Berhasil mengubah data');
         } catch (\Exception $e) {
@@ -55,13 +59,17 @@ class TransaksiDetailController extends Controller
         }
     }
 
-    public function destroy()
+    public function destroy($id)
     {
+        DB::beginTransaction();
         $transaksidetail = TransaksiDetail::findOrFail($id);
 
         $transaksi = Transaksi::with('transaksidetail')->findOrFail($transaksidetail->id_transaksi);
-        $transaksi->total_harga = sum subtotal;
-        $transaksi->kembalian = bayar - total_harga;
+        $transaksidetail->delete();
+
+        $total_harga = $transaksi->transaksidetail->sum('subtotal');
+        $transaksi->total_harga = $total_harga;
+        $transaksi->kembalian = $transaksi->bayar - $total_harga;
         $transaksi->save();
 
         return redirect('transaksidetail/'.$transaksidetail->id_transaksi)->with('pesan', 'Berhasil menghapus data');
