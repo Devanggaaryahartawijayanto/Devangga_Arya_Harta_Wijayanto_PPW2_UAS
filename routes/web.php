@@ -26,7 +26,7 @@ Route::controller(LoginController::class)->group(function() {
     Route::post('/authenticate', 'authenticate')->name('authenticate');
     Route::post('/logout', 'logout')->name('logout');
 });
-Route::middleware(['auth'])->group(function () {
+// Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
 
     Route::prefix('/transaksi')->group(function () {
@@ -45,5 +45,5 @@ Route::middleware(['auth'])->group(function () {
         Route::put('update/{id}', [TransaksiDetailController::class, 'update'])->name('transaksidetail.update');
         Route::delete('delete/{id}', [TransaksiDetailController::class, 'destroy'])->name('transaksidetail.destroy');
     });
-});
+// });
 
