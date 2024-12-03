@@ -1,4 +1,5 @@
-
+@extends('layouts')
+@section('content')
     <h2>Data Detail Transaksi</h2>
     <div class="card">
         <div class="card-header bg-white">
@@ -17,7 +18,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach ( as $index => $data)
+                @foreach ($transaksidetail as $index => $data)
                     <tr>
                         <td>{{ $index+1 }}</td>
                         <td>{{ \Carbon\Carbon::parse($data->transaksi->tanggal)->format('d/m/Y') }}</td>

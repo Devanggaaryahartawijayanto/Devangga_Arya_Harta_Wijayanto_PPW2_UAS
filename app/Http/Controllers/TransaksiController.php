@@ -38,7 +38,7 @@ class TransaksiController extends Controller
             'jumlah3' => 'required|numeric',
         ]);
 
-        // Gunakan transaction
+        DB::beginTransaction();
         try {
             $transaksi = new Transaksi();
             $transaksi->tanggal_pembelian = $request->input('tanggal_pembelian');
